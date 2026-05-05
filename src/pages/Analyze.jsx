@@ -32,17 +32,17 @@ function Analyze() {
   useEffect(() => {
     let isMounted = true
 
-    Promise.all([fetchWasteInfo(), fetchClassifierCategories()])
-      .then(([info, categories]) => {
+    Promise.allSettled([fetchWasteInfo(), fetchClassifierCategories()])
+      .then(([infoResult, categoriesResult]) => {
         if (isMounted) {
-          setWasteInfo(info)
-          setCategoryOptions(categories)
-        }
-      })
-      .catch(() => {
-        if (isMounted) {
-          setWasteInfo({})
-          setCategoryOptions([])
+          setWasteInfo(
+            infoResult.status === 'fulfilled' ? infoResult.value : {}
+          )
+          setCategoryOptions(
+            categoriesResult.status === 'fulfilled'
+              ? categoriesResult.value
+              : []
+          )
         }
       })
 
