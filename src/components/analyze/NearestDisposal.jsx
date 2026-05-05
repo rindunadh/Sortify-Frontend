@@ -17,6 +17,8 @@ function NearestDisposal() {
     fetchLocations()
       .then((apiLocations) => {
         if (isMounted) {
+          
+          console.log(apiLocations)
           setLocations(apiLocations)
           setLoadError('')
         }
