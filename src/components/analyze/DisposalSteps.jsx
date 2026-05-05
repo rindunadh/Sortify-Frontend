@@ -45,12 +45,26 @@ function dedupeTutorials(tutorials) {
   })
 }
 
+const ITEM_LABELS = {
+  battery: 'battery',
+  biological: 'organic waste',
+  cardboard: 'cardboard',
+  paper: 'paper',
+  clothes: 'clothes',
+  shoes: 'shoes',
+  glass: 'glass',
+  metal: 'metal',
+  plastic: 'plastic',
+  trash: 'residual waste',
+}
+
 /**
  * Step 3 - Disposal guide: category filter pills + numbered instructions
  * for the currently selected category. Defaults to the AI-detected one.
  */
 function DisposalSteps({
   detectedCategory,
+  detectedItem,
   resultRecommendation,
   wasteInfo = {},
   categoryOptions = [],
@@ -86,10 +100,12 @@ function DisposalSteps({
   const handling = Array.isArray(selectedRecommendation?.penanganan)
     ? selectedRecommendation.penanganan
     : selectedRecommendation?.penanganan || selectedRecommendation?.mandiri
-  const backendTutorials = dedupeTutorials([
-    ...getHandlingMedia(handling),
-    ...(wasteInfo[selected]?.tutorials || []),
-  ])
+  const recommendationTutorials = getHandlingMedia(handling)
+  const backendTutorials = dedupeTutorials(
+    recommendationTutorials.length > 0
+      ? recommendationTutorials
+      : wasteInfo[selected]?.tutorials || []
+  )
   const tutorialItems =
     backendTutorials.length > 0
       ? backendTutorials
@@ -103,6 +119,10 @@ function DisposalSteps({
         ].filter((item) => item.url)
   const videoTutorials = tutorialItems.filter((item) => item.type === 'video')
   const articleTutorials = tutorialItems.filter((item) => item.type === 'article')
+  const tutorialSubject =
+    selectedRecommendation && detectedItem
+      ? ITEM_LABELS[detectedItem] || detectedItem
+      : category.label
 
   return (
     <section className="analyze-card fade-in is-visible">
@@ -155,7 +175,7 @@ function DisposalSteps({
       {(videoTutorials.length > 0 || articleTutorials.length > 0) && (
         <div className="tutorial-section">
           <div className="tutorial-section-head">
-            <span>Watch creative reuse tutorials for {category.label}</span>
+            <span>Watch creative reuse tutorials for {tutorialSubject}</span>
           </div>
 
           {videoTutorials.length > 0 && (

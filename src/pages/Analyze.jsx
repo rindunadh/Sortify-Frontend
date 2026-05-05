@@ -124,6 +124,7 @@ function Analyze() {
             <ResultStep previewUrl={previewUrl} result={result} />
             <DisposalSteps
               detectedCategory={result.category}
+              detectedItem={result.items?.[0]}
               resultRecommendation={result.recommendation}
               wasteInfo={wasteInfo}
               categoryOptions={categoryOptions}
