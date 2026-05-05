@@ -8,10 +8,10 @@ Node.js dan npm
 
 Link instalasi: https://nodejs.org/
 
-# 1. Clone repo
+# 1. Clone repo FN (harusnya clone repo frontend)
 ```
-git clone https://github.com/ViolinMonica/hackathon-iyref.git
-cd hackathon-iyref
+git clone https://github.com/rindunadh/Sortify-Frontend.git
+cd Sortify-Frontend
 ```
 
 # 2. Install dependencies
@@ -21,9 +21,9 @@ npm install
 
 # 3. Siapkan backend
 Frontend membutuhkan Sortify backend agar fitur AI dan data TPS berjalan.
-Jalankan backend terlebih dahulu di:
+Jalankan backend terlebih dahulu, steps ada di:
 ```
-http://localhost:8000
+https://github.com/ViolinMonica/Sortify-backend/tree/main
 ```
 
 Endpoint backend yang dipakai frontend:
@@ -33,7 +33,7 @@ GET  /api/waste/         -> rekomendasi dan tutorial disposal
 GET  /api/locations/     -> daftar lokasi disposal
 ```
 
-# 4. Buat file .env jika perlu
+# 4. Buat file .env (jika perlu)
 Secara default frontend akan memanggil backend di:
 ```
 http://localhost:8000
@@ -52,16 +52,6 @@ npm run dev
 Lalu buka:
 ```
 http://localhost:5173
-```
-
-# 6. Build production
-```
-npm run build
-```
-
-# 7. Preview hasil build
-```
-npm run preview
 ```
 
 ## Fitur Frontend
