@@ -6,6 +6,7 @@ import { fetchLocations } from '../../services/sortifyApi'
  */
 function NearestDisposal() {
   const [selectedCity, setSelectedCity] = useState('All')
+  const [selectedType, setSelectedType] = useState('All')
   const [searchTerm, setSearchTerm] = useState('')
   const [locations, setLocations] = useState([])
   const [isLoading, setIsLoading] = useState(true)
@@ -45,15 +46,38 @@ function NearestDisposal() {
     ],
     [locations]
   )
+  const typeOptions = useMemo(
+    () => [
+      { id: 'All', label: 'All' },
+      ...Array.from(
+        new Map(
+          locations
+            .filter((location) => location.typeId || location.type)
+            .map((location) => [
+              location.typeId || location.type,
+              {
+                id: location.typeId || location.type,
+                label: location.type || location.typeId,
+              },
+            ])
+        ).values()
+      ),
+    ],
+    [locations]
+  )
 
   // Apply all visible filters in one place so the rendered list stays predictable.
   const filteredLocations = locations.filter((location) => {
     const cityMatches = selectedCity === 'All' || location.city === selectedCity
+    const typeMatches =
+      selectedType === 'All' ||
+      location.typeId === selectedType ||
+      location.type === selectedType
     const searchMatches =
       location.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       location.address.toLowerCase().includes(searchTerm.toLowerCase())
 
-    return cityMatches && searchMatches
+    return cityMatches && typeMatches && searchMatches
   })
 
   return (
@@ -84,6 +108,21 @@ function NearestDisposal() {
             onClick={() => setSelectedCity(city)}
           >
             {city}
+          </button>
+        ))}
+      </div>
+
+      <div className="city-list" aria-label="Filter by disposal option">
+        {typeOptions.map((option) => (
+          <button
+            key={option.id}
+            type="button"
+            className={`city-chip ${
+              option.id === selectedType ? 'city-chip--active' : ''
+            }`}
+            onClick={() => setSelectedType(option.id)}
+          >
+            {option.label}
           </button>
         ))}
       </div>

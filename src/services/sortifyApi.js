@@ -166,6 +166,7 @@ export async function fetchLocations() {
     id: location.id,
     name: location.name,
     city: location.city,
+    typeId: location.facility_type,
     type: location.facility_type_display || location.facility_type || 'TPS',
     address: [location.address, location.city, location.province]
       .filter(Boolean)
