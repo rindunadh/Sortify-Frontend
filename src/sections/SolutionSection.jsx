@@ -4,7 +4,7 @@ function SolutionSection() {
     <section className="solution-section">
       <h2>Solution</h2>
       <p className="solution-subtitle">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit
+        Scan, sort, and dispose of waste the right way
       </p>
 
       <div className="solution-card">

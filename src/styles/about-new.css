@@ -1,0 +1,454 @@
+/* ==========================================================
+   About Page — New Design (Final Alignment)
+   ========================================================== */
+
+.about-page-new {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 80% 34%, rgba(255, 255, 255, 0.95) 0 18%, rgba(255, 255, 255, 0) 38%),
+    linear-gradient(104deg, rgba(232, 242, 247, 0.98) 0%, rgba(246, 250, 251, 0.96) 48%, #ffffff 100%);
+  overflow-x: hidden;
+}
+
+/* ---------- Hero Section ---------- */
+.about-new-hero {
+  position: relative;
+  /* Dikurangi agar tidak terlalu jangkung */
+  min-height: 850px; 
+  padding-top: 32px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 80% 34%, rgba(255, 255, 255, 0.95) 0 18%, rgba(255, 255, 255, 0) 38%),
+    linear-gradient(104deg, rgba(232, 242, 247, 0.98) 0%, rgba(246, 250, 251, 0.96) 48%, #ffffff 100%);
+}
+
+/* Background image overlay */
+.about-new-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.18;
+  background-image: url("/figma-assets/hero-bg.png");
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: 1462px 1028px;
+  pointer-events: none;
+}
+
+/* Bubbly paper bottom edge[cite: 2] */
+.about-new-hero::after {
+  content: "";
+  position: absolute;
+  left: -4%;
+  right: -4%;
+  bottom: -1px;
+  z-index: 2;
+  height: 190px;
+  background:
+    radial-gradient(90px 34px at 8% 38%, transparent 48%, #fffff9 50%),
+    radial-gradient(120px 48px at 18% 32%, transparent 48%, #fffff9 50%),
+    radial-gradient(110px 42px at 31% 44%, transparent 48%, #fffff9 50%),
+    radial-gradient(150px 56px at 48% 30%, transparent 48%, #fffff9 50%),
+    radial-gradient(120px 44px at 64% 45%, transparent 48%, #fffff9 50%),
+    radial-gradient(140px 54px at 82% 36%, transparent 48%, #fffff9 50%),
+    #fffff9;
+  clip-path: polygon(
+    0 54%, 6% 40%, 12% 50%, 18% 32%, 26% 42%, 33% 28%, 40% 49%, 
+    48% 38%, 55% 58%, 64% 43%, 71% 60%, 80% 46%, 88% 58%, 100% 38%, 100% 100%, 0 100%
+  );
+  filter: drop-shadow(0 -12px 10px rgba(40, 56, 74, 0.18));
+}
+
+.about-new-hero-content {
+  position: relative;
+  z-index: 4;
+  width: 750px; /* Sedikit lebih lebar agar teks tidak terlalu memanjang ke bawah */
+  margin: 0 auto;
+  /* Nilai ini dikurangi supaya posisi teks naik ke atas[cite: 2] */
+  padding-top: 80px; 
+  text-align: center;
+}
+
+.about-new-hero-content h1 {
+  margin: 0;
+  color: #13233d;
+  font-size: 75px; /* Sesuai landing[cite: 2] */
+  font-weight: 400;
+  line-height: 1.22;
+}
+
+.about-new-hero-content {
+  position: relative;
+  z-index: 4;
+  width: 750px; 
+  margin: 0 auto;
+  /* Ubah dari 80px ke 40px atau bahkan 20px untuk posisi lebih ke atas */
+  padding-top: 40px; 
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .about-new-hero { 
+    min-height: 600px; /* Dikurangi agar proporsional di HP */
+  }
+  .about-new-hero-content { 
+    width: min(100%, 460px); 
+    /* Ubah dari 112px ke 50px agar di HP juga ikut naik ke atas[cite: 2] */
+    padding-top: 50px; 
+  }
+  .about-new-hero-content h1 { font-size: 50px; }
+  .about-new-hero-content p { font-size: 18px; }
+}
+
+/* ---------- Project Scope & Limitation ---------- */
+.about-new-scope {
+  position: relative;
+  padding: 80px 24px 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 450px;
+}
+
+.about-new-scope-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(500px, 80vw);
+  height: min(500px, 80vw);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(170, 190, 220, 0.35) 0%,
+    rgba(170, 190, 220, 0.2) 35%,
+    rgba(170, 190, 220, 0.08) 60%,
+    transparent 80%
+  );
+  pointer-events: none;
+}
+
+.about-new-scope-content {
+  position: relative;
+  z-index: 1;
+  max-width: 560px;
+  text-align: center;
+}
+
+.about-new-scope-content h2 {
+  margin: 0 0 20px;
+  color: #1a2a3a;
+  font-size: clamp(26px, 4.5vw, 38px);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.about-new-scope-content p {
+  margin: 0 0 12px;
+  color: #3a4a5a;
+  font-size: clamp(13px, 2vw, 15px);
+  line-height: 1.7;
+  font-weight: 400;
+}
+
+.about-new-scope-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---------- How it works ---------- */
+.about-new-how {
+  padding: 60px 24px 80px;
+  text-align: center;
+}
+
+.about-new-how h2 {
+  margin: 0;
+  color: #1a2a3a;
+  font-size: clamp(28px, 4.5vw, 40px);
+  font-weight: 800;
+}
+
+.about-new-how-subtitle {
+  margin: 4px 0 0;
+  color: #5a6a7a;
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.about-new-how-wrapper {
+  position: relative;
+  margin-top: 40px;
+  padding: 20px 0 60px;
+  overflow: hidden;
+}
+
+/* Scrolling marquee text - positioned at bottom behind cards */
+.about-new-marquee {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.about-new-marquee-track {
+  display: flex;
+  white-space: nowrap;
+  animation: marquee-scroll 15s linear infinite;
+}
+
+.about-new-marquee-track span {
+  font-size: clamp(40px, 7vw, 80px);
+  font-weight: 900;
+  color: rgba(0, 0, 0, 0.06);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  font-style: italic;
+}
+
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0) rotate(-3deg);
+  }
+  100% {
+    transform: translateX(-50%) rotate(-3deg);
+  }
+}
+
+/* Cards container */
+.about-new-cards {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 20px 10px;
+}
+
+.about-new-card {
+  width: 200px;
+  min-height: 260px;
+  padding: 30px 18px 24px;
+  border-radius: 18px;
+  background: rgba(220, 230, 240, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.about-new-card:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Slight rotation on cards for the tilted look */
+.about-new-card-1 {
+  transform: rotate(-4deg);
+}
+.about-new-card-1:hover {
+  transform: rotate(-4deg) translateY(-4px);
+}
+
+.about-new-card-2 {
+  transform: rotate(0deg) translateY(-10px);
+}
+.about-new-card-2:hover {
+  transform: rotate(0deg) translateY(-14px);
+}
+
+.about-new-card-3 {
+  transform: rotate(4deg);
+}
+.about-new-card-3:hover {
+  transform: rotate(4deg) translateY(-4px);
+}
+
+.about-new-card-icon {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  color: #3a4a5a;
+}
+
+.about-new-card-icon-ai {
+  position: relative;
+  background: linear-gradient(135deg, #4a90d9, #2d6bb5);
+  border-radius: 16px;
+  color: #ffffff;
+}
+
+.ai-text {
+  font-size: 30px;
+  font-weight: 900;
+  color: #ffffff;
+}
+
+.ai-sparkles {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.sparkle {
+  position: absolute;
+  font-size: 16px;
+  color: #f5a623;
+}
+
+.sparkle-1 {
+  top: -10px;
+  right: -10px;
+}
+
+.sparkle-2 {
+  top: -4px;
+  right: 2px;
+  font-size: 11px;
+}
+
+.about-new-card h3 {
+  margin: 0 0 6px;
+  color: #1a2a3a;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.about-new-card p {
+  margin: 0;
+  color: #5a6a7a;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 640px) {
+  .about-new-cards {
+    gap: 12px;
+  }
+
+  .about-new-card {
+    width: 160px;
+    min-height: 200px;
+    padding: 20px 14px 18px;
+  }
+
+  .about-new-card-1 {
+    transform: rotate(-3deg);
+  }
+  .about-new-card-2 {
+    transform: rotate(0deg) translateY(-6px);
+  }
+  .about-new-card-3 {
+    transform: rotate(3deg);
+  }
+
+  .about-new-marquee-track span {
+    font-size: 36px;
+  }
+}
+
+/* Keep About navbar consistent with Home and Analyze.
+   This overrides older About-only navbar experiments from analyze.css. */
+.about-page-new .site-nav {
+  display: flex;
+  width: min(1294px, calc(100% - 146px));
+  height: 69px;
+  max-width: 1400px;
+  margin: 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  border: 0;
+  border-radius: 20px;
+  background: rgba(178, 195, 222, 0.25);
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  padding: 0 60px 0 47px;
+  color: #000;
+  font-size: 24px;
+  font-weight: 600;
+  white-space: nowrap;
+  backdrop-filter: none;
+}
+
+.about-page-new .site-brand {
+  color: #13233d;
+  font-weight: 700;
+}
+
+
+.about-page-new .site-links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.about-page-new .site-links .nav-link:first-child {
+  display: inline-flex;
+}
+
+.about-page-new .site-links .nav-link {
+  display: inline-flex;
+  color: #4a5a73;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.about-page-new .site-links .nav-link:nth-child(3)::before {
+  content: none;
+}
+
+.about-page-new .site-links .nav-link:hover {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+}
+
+.about-page-new .site-links .nav-link--active {
+  background: rgba(59, 130, 246, 0.12);
+  color: #3b82f6;
+} 
+
+@media (max-width: 900px) {
+  .about-page-new .site-nav {
+    width: 100%;
+    height: 52px;
+    min-height: 0;
+    padding: 0 16px;
+    font-size: 12px;
+  }
+
+  .about-page-new .site-brand {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 12px;
+  }
+
+  .about-page-new .site-links {
+    flex-shrink: 0;
+    gap: 8px;
+  }
+
+  .about-page-new .site-links .nav-link {
+    font-size: 12px;
+  }
+}
+
+

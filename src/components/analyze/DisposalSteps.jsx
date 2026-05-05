@@ -5,16 +5,104 @@ import {
   DISPOSAL_STEPS,
   TUTORIAL_LINKS,
 } from '../../data/wasteData'
+import { normalizeCategory } from '../../services/sortifyApi'
+
+function toArray(value) {
+  if (!value) return []
+  return Array.isArray(value) ? value.filter(Boolean) : [value]
+}
+
+function getHandlingMedia(handling) {
+  return toArray(handling).flatMap((item, itemIndex) => {
+    const label = item?.label || item?.jenis || 'Tutorial'
+    const description = item?.description || ''
+    const videos = toArray(item?.video_url).map((url, index) => ({
+      type: 'video',
+      url,
+      label,
+      description,
+      id: `video-${itemIndex}-${index}`,
+    }))
+    const articles = toArray(item?.article_url).map((url, index) => ({
+      type: 'article',
+      url,
+      label,
+      description,
+      id: `article-${itemIndex}-${index}`,
+    }))
+
+    return [...videos, ...articles]
+  })
+}
+
+function dedupeTutorials(tutorials) {
+  const seen = new Set()
+  return tutorials.filter((tutorial) => {
+    const key = `${tutorial.type}:${tutorial.url}`
+    if (!tutorial.url || seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
+}
 
 /**
- * Step 3 – Disposal guide: category filter pills + numbered instructions
+ * Step 3 - Disposal guide: category filter pills + numbered instructions
  * for the currently selected category. Defaults to the AI-detected one.
  */
-function DisposalSteps({ detectedCategory }) {
+function DisposalSteps({
+  detectedCategory,
+  resultRecommendation,
+  wasteInfo = {},
+  categoryOptions = [],
+}) {
   const [selected, setSelected] = useState(detectedCategory)
 
-  const category = WASTE_CATEGORIES[selected]
-  const steps = DISPOSAL_STEPS[selected] || []
+  const selectedRecommendation =
+    resultRecommendation &&
+    normalizeCategory(resultRecommendation.category) === selected
+      ? resultRecommendation
+      : null
+  const category = {
+    ...WASTE_CATEGORIES[selected],
+    ...wasteInfo[selected],
+    color: WASTE_CATEGORIES[selected]?.color || WASTE_CATEGORIES.residual.color,
+  }
+  const categories =
+    categoryOptions.length > 0
+      ? categoryOptions.map((option) => ({
+          ...option,
+          ...wasteInfo[option.id],
+          color:
+            WASTE_CATEGORIES[option.id]?.color ||
+            option.color ||
+            WASTE_CATEGORIES.residual.color,
+        }))
+      : CATEGORY_LIST
+  const steps =
+    selectedRecommendation?.disposal_instructions ||
+    wasteInfo[selected]?.steps ||
+    DISPOSAL_STEPS[selected] ||
+    []
+  const handling = Array.isArray(selectedRecommendation?.penanganan)
+    ? selectedRecommendation.penanganan
+    : selectedRecommendation?.penanganan || selectedRecommendation?.mandiri
+  const backendTutorials = dedupeTutorials([
+    ...getHandlingMedia(handling),
+    ...(wasteInfo[selected]?.tutorials || []),
+  ])
+  const tutorialItems =
+    backendTutorials.length > 0
+      ? backendTutorials
+      : [
+          {
+            id: 'fallback-tutorial',
+            type: 'article',
+            url: wasteInfo[selected]?.tutorialUrl || TUTORIAL_LINKS[selected],
+            label: `Tutorial for ${category.label}`,
+          },
+        ].filter((item) => item.url)
+  const videoTutorials = tutorialItems.filter((item) => item.type === 'video')
+  const articleTutorials = tutorialItems.filter((item) => item.type === 'article')
 
   return (
     <section className="analyze-card fade-in is-visible">
@@ -24,7 +112,7 @@ function DisposalSteps({ detectedCategory }) {
       </div>
 
       <div className="pills-row">
-        {CATEGORY_LIST.map((cat) => {
+        {categories.map((cat) => {
           const active = cat.id === selected
 
           return (
@@ -32,11 +120,7 @@ function DisposalSteps({ detectedCategory }) {
               key={cat.id}
               type="button"
               className={`pill ${active ? 'pill--active' : ''}`}
-              style={
-                active
-                  ? { background: cat.color, color: '#fff' }
-                  : {}
-              }
+              style={active ? { background: cat.color, color: '#fff' } : {}}
               onClick={() => setSelected(cat.id)}
             >
               {cat.label}
@@ -46,16 +130,11 @@ function DisposalSteps({ detectedCategory }) {
       </div>
 
       <div className="steps-header">
-        <span
-          className="category-tag"
-          style={{ background: category.color }}
-        >
+        <span className="category-tag" style={{ background: category.color }}>
           {category.label}
         </span>
 
-        <span className="steps-count">
-          {steps.length} steps
-        </span>
+        <span className="steps-count">{steps.length} steps</span>
       </div>
 
       <ol className="steps-list">
@@ -73,14 +152,48 @@ function DisposalSteps({ detectedCategory }) {
         ))}
       </ol>
 
-      <a
-        href={TUTORIAL_LINKS[selected]}
-        target="_blank"
-        rel="noreferrer"
-        className="tutorial-link"
-      >
-        ▶ Watch creative reuse tutorials for {category.label}
-      </a>
+      {(videoTutorials.length > 0 || articleTutorials.length > 0) && (
+        <div className="tutorial-section">
+          <div className="tutorial-section-head">
+            <span>Watch creative reuse tutorials for {category.label}</span>
+          </div>
+
+          {videoTutorials.length > 0 && (
+            <div className="tutorial-video-grid">
+              {videoTutorials.map((tutorial, index) => (
+                <article className="tutorial-video-item" key={tutorial.id}>
+                  <iframe
+                    src={tutorial.url}
+                    title={`${tutorial.label} ${index + 1}`}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  />
+                  <div className="tutorial-video-copy">
+                    <strong>{tutorial.label}</strong>
+                    {tutorial.description && <p>{tutorial.description}</p>}
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+
+          {articleTutorials.length > 0 && (
+            <div className="tutorial-article-row">
+              {articleTutorials.map((tutorial) => (
+                <a
+                  href={tutorial.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="tutorial-link"
+                  key={tutorial.id}
+                >
+                  Read article: {tutorial.label}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </section>
   )
 }

@@ -1,10 +1,15 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Navbar from '../components/Navbar'
 import UploadStep from '../components/analyze/UploadStep'
 import ResultStep from '../components/analyze/ResultStep'
 import DisposalSteps from '../components/analyze/DisposalSteps'
 import NearestDisposal from '../components/analyze/NearestDisposal'
 import { classifyWaste } from '../data/wasteData'
+import {
+  classifyWasteImage,
+  fetchClassifierCategories,
+  fetchWasteInfo,
+} from '../services/sortifyApi'
 
 /**
  * Analyze page orchestrates the full Sortify flow:
@@ -20,10 +25,36 @@ function Analyze() {
   const [previewUrl, setPreviewUrl] = useState(null)
   const [result, setResult] = useState(null) // { category, confidence, items }
   const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [wasteInfo, setWasteInfo] = useState({})
+  const [categoryOptions, setCategoryOptions] = useState([])
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    let isMounted = true
+
+    Promise.all([fetchWasteInfo(), fetchClassifierCategories()])
+      .then(([info, categories]) => {
+        if (isMounted) {
+          setWasteInfo(info)
+          setCategoryOptions(categories)
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setWasteInfo({})
+          setCategoryOptions([])
+        }
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   const handleFileSelected = (selected) => {
     setFile(selected)
     setResult(null)
+    setError('')
 
     if (previewUrl) URL.revokeObjectURL(previewUrl)
 
@@ -34,13 +65,19 @@ function Analyze() {
     if (!file) return
 
     setIsAnalyzing(true)
+    setError('')
 
-    // Simulate network/model latency so the loading UI is visible.
-    await new Promise((resolve) => setTimeout(resolve, 1200))
-
-    const classification = classifyWaste(file)
-    setResult(classification)
-    setIsAnalyzing(false)
+    try {
+      const classification = await classifyWasteImage(file)
+      setResult(classification)
+    } catch (err) {
+      setError(
+        `${err.message} Showing a local demo result until the backend is ready.`
+      )
+      setResult(classifyWaste(file))
+    } finally {
+      setIsAnalyzing(false)
+    }
   }
 
   const handleReset = () => {
@@ -49,6 +86,7 @@ function Analyze() {
     setFile(null)
     setPreviewUrl(null)
     setResult(null)
+    setError('')
   }
 
   return (
@@ -75,11 +113,22 @@ function Analyze() {
           hasResult={Boolean(result)}
         />
 
+        {error && (
+          <p className="api-status api-status--warning" role="status">
+            {error}
+          </p>
+        )}
+
         {result && (
           <>
             <ResultStep previewUrl={previewUrl} result={result} />
-            <DisposalSteps detectedCategory={result.category} />
-            <NearestDisposal detectedCategory={result.category} />
+            <DisposalSteps
+              detectedCategory={result.category}
+              resultRecommendation={result.recommendation}
+              wasteInfo={wasteInfo}
+              categoryOptions={categoryOptions}
+            />
+            <NearestDisposal />
           </>
         )}
       </div>

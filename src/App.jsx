@@ -4,6 +4,8 @@ import './styles/analyze.css'
 import Home from './pages/Home'
 import Analyze from './pages/Analyze'
 import About from './pages/About'
+import './styles/about-new.css'
+
 
 function App() {
   // Top-level router. Each route owns its page composition.

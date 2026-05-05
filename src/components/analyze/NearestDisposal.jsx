@@ -1,38 +1,58 @@
-import { useMemo, useState } from 'react'
-import {
-  CATEGORY_LIST,
-  DISPOSAL_LOCATIONS,
-  WASTE_CATEGORIES,
-} from '../../data/wasteData'
+import { useEffect, useMemo, useState } from 'react'
+import { fetchLocations } from '../../services/sortifyApi'
 
 /**
- * Step 4 - Nearest disposal: filters nearby facilities by city and waste type.
- * The location data is mocked for the demo, but the UI is ready for API data later.
+ * Step 4 - Nearest disposal: filters nearby facilities by city/search.
  */
-function NearestDisposal({ detectedCategory }) {
+function NearestDisposal() {
   const [selectedCity, setSelectedCity] = useState('All')
   const [searchTerm, setSearchTerm] = useState('')
-  const [onlyDetected, setOnlyDetected] = useState(true)
+  const [locations, setLocations] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [loadError, setLoadError] = useState('')
 
-  // Build the city chips from the data so adding a new location updates the UI automatically.
-  const cities = useMemo(() => {
-    const uniqueCities = DISPOSAL_LOCATIONS.map((location) => location.city)
-    return ['All', ...new Set(uniqueCities)]
+  useEffect(() => {
+    let isMounted = true
+
+    fetchLocations()
+      .then((apiLocations) => {
+        if (isMounted) {
+          setLocations(apiLocations)
+          setLoadError('')
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setLocations([])
+          setLoadError('Backend TPS data is unavailable right now.')
+        }
+      })
+      .finally(() => {
+        if (isMounted) setIsLoading(false)
+      })
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
+  const cityOptions = useMemo(
+    () => [
+      'All',
+      ...new Set(locations.map((location) => location.city).filter(Boolean)),
+    ],
+    [locations]
+  )
+
   // Apply all visible filters in one place so the rendered list stays predictable.
-  const filteredLocations = DISPOSAL_LOCATIONS.filter((location) => {
+  const filteredLocations = locations.filter((location) => {
     const cityMatches = selectedCity === 'All' || location.city === selectedCity
-    const categoryMatches =
-      !onlyDetected || location.accepts.includes(detectedCategory)
     const searchMatches =
       location.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       location.address.toLowerCase().includes(searchTerm.toLowerCase())
 
-    return cityMatches && categoryMatches && searchMatches
+    return cityMatches && searchMatches
   })
-
-  const detectedLabel = WASTE_CATEGORIES[detectedCategory]?.label || 'Waste'
 
   return (
     <section className="analyze-card fade-in is-visible">
@@ -49,19 +69,10 @@ function NearestDisposal({ detectedCategory }) {
           value={searchTerm}
           onChange={(event) => setSearchTerm(event.target.value)}
         />
-
-        <label className="disposal-filter-toggle">
-          <input
-            type="checkbox"
-            checked={onlyDetected}
-            onChange={(event) => setOnlyDetected(event.target.checked)}
-          />
-          Accepts {detectedLabel}
-        </label>
       </div>
 
       <div className="city-list" aria-label="Filter by city">
-        {cities.map((city) => (
+        {cityOptions.map((city) => (
           <button
             key={city}
             type="button"
@@ -76,6 +87,18 @@ function NearestDisposal({ detectedCategory }) {
       </div>
 
       <div className="location-grid">
+        {isLoading && (
+          <p className="location-empty">
+            Loading TPS locations...
+          </p>
+        )}
+
+        {loadError && !isLoading && (
+          <p className="api-status api-status--warning" role="status">
+            {loadError}
+          </p>
+        )}
+
         {filteredLocations.map((location) => (
           <article className="location-card" key={location.id}>
             <div className="location-card-head">
@@ -86,30 +109,22 @@ function NearestDisposal({ detectedCategory }) {
             <p className="location-address">{location.address}</p>
 
             <div className="location-meta">
-              <span className="location-distance">
-                {location.distanceKm.toFixed(1)} km away
-              </span>
+              {location.distanceKm > 0 && (
+                <span className="location-distance">
+                  {location.distanceKm.toFixed(1)} km away
+                </span>
+              )}
 
-              <div className="location-accepts" aria-label="Accepted waste">
-                {location.accepts.map((categoryId) => (
-                  <span
-                    key={categoryId}
-                    className="category-tag category-tag--sm"
-                    style={{
-                      background: WASTE_CATEGORIES[categoryId].color,
-                    }}
-                  >
-                    {WASTE_CATEGORIES[categoryId].label}
-                  </span>
-                ))}
-              </div>
             </div>
 
             <a
               className="btn-primary btn-navigate"
-              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                location.address
-              )}`}
+              href={
+                location.mapsUrl ||
+                `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                  location.address
+                )}`
+              }
               target="_blank"
               rel="noreferrer"
             >
@@ -118,7 +133,7 @@ function NearestDisposal({ detectedCategory }) {
           </article>
         ))}
 
-        {filteredLocations.length === 0 && (
+        {!isLoading && filteredLocations.length === 0 && (
           <p className="location-empty">
             No disposal locations match your filters yet.
           </p>

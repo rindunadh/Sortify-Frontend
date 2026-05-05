@@ -5,7 +5,10 @@ import { WASTE_CATEGORIES } from '../../data/wasteData'
  * confidence score, and detected items as colored tags.
  */
 function ResultStep({ previewUrl, result }) {
-  const category = WASTE_CATEGORIES[result.category]
+  const category = WASTE_CATEGORIES[result.category] || WASTE_CATEGORIES.residual
+  const recommendation = result.recommendation
+  const detectedLabel = recommendation?.category || category.label
+  const description = recommendation?.description || category.description
   const confidencePct = Math.round(result.confidence * 100)
 
   return (
@@ -48,12 +51,12 @@ function ResultStep({ previewUrl, result }) {
               className="category-tag category-tag--large"
               style={{ background: category.color }}
             >
-              {category.label}
+              {detectedLabel}
             </span>
           </div>
 
           <p className="result-description">
-            {category.description}
+            {description}
           </p>
 
           <div className="result-items">
