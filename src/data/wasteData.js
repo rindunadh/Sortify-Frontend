@@ -3,7 +3,7 @@
 export const WASTE_CATEGORIES = {
   organic: {
     id: 'organic',
-    label: 'Organik',
+    label: 'Organic',
     backendLabel: 'Organik',
     color: '#22c55e',
     description:
@@ -11,7 +11,7 @@ export const WASTE_CATEGORIES = {
   },
   plastic: {
     id: 'plastic',
-    label: 'Plastik',
+    label: 'Plastic',
     backendLabel: 'Plastik',
     color: '#3b82f6',
     description:
@@ -19,7 +19,7 @@ export const WASTE_CATEGORIES = {
   },
   paper: {
     id: 'paper',
-    label: 'Kertas',
+    label: 'Paper',
     backendLabel: 'Kertas',
     color: '#f59e0b',
     description:
@@ -27,7 +27,7 @@ export const WASTE_CATEGORIES = {
   },
   cardboard: {
     id: 'cardboard',
-    label: 'Kardus',
+    label: 'Cardboard',
     backendLabel: 'Kardus',
     color: '#d97706',
     description:
@@ -35,7 +35,7 @@ export const WASTE_CATEGORIES = {
   },
   glass: {
     id: 'glass',
-    label: 'Kaca',
+    label: 'Glass',
     backendLabel: 'Kaca',
     color: '#14b8a6',
     description:
@@ -51,7 +51,7 @@ export const WASTE_CATEGORIES = {
   },
   metal: {
     id: 'metal',
-    label: 'Logam',
+    label: 'Metal',
     backendLabel: 'Logam',
     color: '#64748b',
     description:
@@ -59,7 +59,7 @@ export const WASTE_CATEGORIES = {
   },
   residual: {
     id: 'residual',
-    label: 'Residu',
+    label: 'Residual',
     backendLabel: 'Residu',
     color: '#78716c',
     description:
@@ -67,7 +67,7 @@ export const WASTE_CATEGORIES = {
   },
   textile: {
     id: 'textile',
-    label: 'Tekstil',
+    label: 'Textile',
     backendLabel: 'Tekstil',
     color: '#a855f7',
     description:
@@ -75,7 +75,7 @@ export const WASTE_CATEGORIES = {
   },
   fabric: {
     id: 'fabric',
-    label: 'Kain',
+    label: 'Fabric',
     backendLabel: 'Kain',
     color: '#a855f7',
     description:
@@ -83,7 +83,7 @@ export const WASTE_CATEGORIES = {
   },
   shoes: {
     id: 'shoes',
-    label: 'Sepatu',
+    label: 'Shoes',
     backendLabel: 'Sepatu',
     color: '#8b5cf6',
     description:
@@ -172,15 +172,15 @@ export const TUTORIAL_LINKS = {
   glass: 'https://www.youtube.com/results?search_query=glass+bottle+reuse+tutorial',
   hazardous:
     'https://www.youtube.com/results?search_query=hazardous+waste+disposal+safety',
-  metal: 'https://www.youtube.com/results?search_query=kreasi+kaleng+bekas',
+  metal: 'https://www.youtube.com/results?search_query=metal+can+reuse+tutorial',
   residual:
-    'https://www.youtube.com/results?search_query=cara+mengurangi+sampah+residu',
+    'https://www.youtube.com/results?search_query=how+to+reduce+residual+waste',
   textile:
-    'https://www.youtube.com/results?search_query=tempat+donasi+baju+bekas+indonesia',
+    'https://www.youtube.com/results?search_query=clothes+donation+and+upcycling+tutorial',
   fabric:
-    'https://www.youtube.com/results?search_query=upcycle+baju+bekas+tutorial',
+    'https://www.youtube.com/results?search_query=upcycle+old+clothes+tutorial',
   shoes:
-    'https://www.youtube.com/results?search_query=upcycle+sepatu+bekas+tutorial',
+    'https://www.youtube.com/results?search_query=upcycle+old+shoes+tutorial',
 }
 
 export const DISPOSAL_LOCATIONS = [

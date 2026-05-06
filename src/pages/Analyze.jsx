@@ -4,12 +4,46 @@ import UploadStep from '../components/analyze/UploadStep'
 import ResultStep from '../components/analyze/ResultStep'
 import DisposalSteps from '../components/analyze/DisposalSteps'
 import NearestDisposal from '../components/analyze/NearestDisposal'
-import { classifyWaste } from '../data/wasteData'
 import {
   classifyWasteImage,
   fetchClassifierCategories,
   fetchWasteInfo,
 } from '../services/sortifyApi'
+
+const SUPPORTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+const SUPPORTED_IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp']
+
+function isSupportedImage(file) {
+  const extension = file?.name?.split('.').pop()?.toLowerCase()
+
+  return (
+    SUPPORTED_IMAGE_TYPES.includes(file?.type) ||
+    SUPPORTED_IMAGE_EXTENSIONS.includes(extension)
+  )
+}
+
+function getAnalyzeErrorMessage(error) {
+  const message = String(error?.message || '').toLowerCase()
+
+  if (
+    message.includes('format') ||
+    message.includes('unsupported') ||
+    message.includes('tidak didukung')
+  ) {
+    return 'Unsupported file format. Please upload a JPG, PNG, or WEBP image.'
+  }
+
+  if (
+    message.includes('failed to fetch') ||
+    message.includes('network') ||
+    message.includes('backend') ||
+    message.includes('load failed')
+  ) {
+    return 'Could not fetch data from the backend. Please make sure the backend server is running and try again.'
+  }
+
+  return 'Could not analyze this image. Please try again with a clear JPG, PNG, or WEBP photo.'
+}
 
 /**
  * Analyze page orchestrates the full Sortify flow:
@@ -64,6 +98,12 @@ function Analyze() {
   const handleAnalyze = async () => {
     if (!file) return
 
+    if (!isSupportedImage(file)) {
+      setResult(null)
+      setError('Unsupported file format. Please upload a JPG, PNG, or WEBP image.')
+      return
+    }
+
     setIsAnalyzing(true)
     setError('')
 
@@ -71,10 +111,8 @@ function Analyze() {
       const classification = await classifyWasteImage(file)
       setResult(classification)
     } catch (err) {
-      setError(
-        `${err.message} Showing a local demo result until the backend is ready.`
-      )
-      setResult(classifyWaste(file))
+      setResult(null)
+      setError(getAnalyzeErrorMessage(err))
     } finally {
       setIsAnalyzing(false)
     }

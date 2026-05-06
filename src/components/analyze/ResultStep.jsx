@@ -1,4 +1,5 @@
 import { WASTE_CATEGORIES } from '../../data/wasteData'
+import { normalizeCategory } from '../../services/sortifyApi'
 
 /**
  * Step 2 – Result: displays the preview alongside the detected category,
@@ -7,7 +8,11 @@ import { WASTE_CATEGORIES } from '../../data/wasteData'
 function ResultStep({ previewUrl, result }) {
   const category = WASTE_CATEGORIES[result.category] || WASTE_CATEGORIES.residual
   const recommendation = result.recommendation
-  const detectedLabel = recommendation?.category || category.label
+  const recommendationCategory = recommendation?.category
+    ? normalizeCategory(recommendation.category)
+    : ''
+  const detectedLabel =
+    WASTE_CATEGORIES[recommendationCategory]?.label || category.label
   const description = recommendation?.description || category.description
   const confidencePct = Math.round(result.confidence * 100)
 

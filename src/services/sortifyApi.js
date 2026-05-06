@@ -111,9 +111,7 @@ export async function classifyWasteImage(file) {
   return {
     category,
     confidence: confidence > 1 ? confidence / 100 : confidence,
-    items: [classification.raw_label || recommendation?.category || category].filter(
-      Boolean
-    ),
+    items: [WASTE_CATEGORIES[category]?.label || category].filter(Boolean),
     recommendation,
   }
 }
@@ -126,7 +124,7 @@ export async function fetchClassifierCategories() {
     const id = normalizeCategory(category)
     return {
       id,
-      label: category,
+      label: WASTE_CATEGORIES[id]?.label || category,
       color: WASTE_CATEGORIES[id]?.color || WASTE_CATEGORIES.residual.color,
     }
   })
@@ -145,7 +143,7 @@ export async function fetchWasteInfo() {
 
     acc[id] = {
       id,
-      label: item.category,
+      label: WASTE_CATEGORIES[id]?.label || item.category,
       description: item.description,
       steps: item.disposal_instructions || [],
       tutorials,
