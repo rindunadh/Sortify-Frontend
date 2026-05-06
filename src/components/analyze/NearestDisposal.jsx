@@ -97,34 +97,40 @@ function NearestDisposal() {
         />
       </div>
 
-      <div className="city-list" aria-label="Filter by city">
-        {cityOptions.map((city) => (
-          <button
-            key={city}
-            type="button"
-            className={`city-chip ${
-              city === selectedCity ? 'city-chip--active' : ''
-            }`}
-            onClick={() => setSelectedCity(city)}
-          >
-            {city}
-          </button>
-        ))}
+      <div className="filter-group">
+        <span className="filter-label">City</span>
+        <div className="city-list" aria-label="Filter by city">
+          {cityOptions.map((city) => (
+            <button
+              key={city}
+              type="button"
+              className={`city-chip ${
+                city === selectedCity ? 'city-chip--active' : ''
+              }`}
+              onClick={() => setSelectedCity(city)}
+            >
+              {city}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <div className="city-list" aria-label="Filter by disposal option">
-        {typeOptions.map((option) => (
-          <button
-            key={option.id}
-            type="button"
-            className={`city-chip ${
-              option.id === selectedType ? 'city-chip--active' : ''
-            }`}
-            onClick={() => setSelectedType(option.id)}
-          >
-            {option.label}
-          </button>
-        ))}
+      <div className="filter-group">
+        <span className="filter-label">Disposal Type</span>
+        <div className="city-list" aria-label="Filter by disposal option">
+          {typeOptions.map((option) => (
+            <button
+              key={option.id}
+              type="button"
+              className={`city-chip ${
+                option.id === selectedType ? 'city-chip--active' : ''
+              }`}
+              onClick={() => setSelectedType(option.id)}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="location-grid">

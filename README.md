@@ -8,7 +8,7 @@ Node.js dan npm
 
 Link instalasi: https://nodejs.org/
 
-# 1. Clone repo FN (harusnya clone repo frontend)
+# 1. Clone repo 
 ```
 git clone https://github.com/rindunadh/Sortify-Frontend.git
 cd Sortify-Frontend
