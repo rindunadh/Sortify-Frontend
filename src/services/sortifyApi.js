@@ -111,7 +111,7 @@ export async function classifyWasteImage(file) {
   return {
     category,
     confidence: confidence > 1 ? confidence / 100 : confidence,
-    items: [WASTE_CATEGORIES[category]?.label || category].filter(Boolean),
+    items: [classification.raw_label || WASTE_CATEGORIES[category]?.label || category].filter(Boolean),
     recommendation,
   }
 }
