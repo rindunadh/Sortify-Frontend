@@ -28,7 +28,11 @@ const CATEGORY_ALIASES = {
   shoes: 'shoes',
   b3: 'hazardous',
   hazardous: 'hazardous',
+  'hazardous waste': 'hazardous',
   berbahaya: 'hazardous',
+  limbah_b3: 'hazardous',
+  'limbah b3': 'hazardous',
+  residue: 'residual',
 }
 
 export function getBackendCategory(categoryId) {
@@ -147,7 +151,6 @@ export async function fetchWasteInfo() {
       description: item.description,
       steps: item.disposal_instructions || [],
       tutorials,
-      tutorialUrl: tutorials[0]?.url,
       facilityType: item.facility?.type,
     }
     return acc

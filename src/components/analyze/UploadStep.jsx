@@ -74,7 +74,6 @@ function UploadStep({
             ref={inputRef}
             type="file"
             accept="image/*"
-            capture="environment"
             onChange={handleChange}
             hidden
           />

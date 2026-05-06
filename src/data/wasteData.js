@@ -163,26 +163,6 @@ export const DISPOSAL_STEPS = {
   ],
 }
 
-export const TUTORIAL_LINKS = {
-  organic: 'https://www.youtube.com/results?search_query=home+composting+tutorial',
-  plastic: 'https://www.youtube.com/results?search_query=plastic+waste+reuse+tutorial',
-  paper: 'https://www.youtube.com/results?search_query=paper+recycling+craft+tutorial',
-  cardboard:
-    'https://www.youtube.com/results?search_query=cardboard+reuse+craft+tutorial',
-  glass: 'https://www.youtube.com/results?search_query=glass+bottle+reuse+tutorial',
-  hazardous:
-    'https://www.youtube.com/results?search_query=hazardous+waste+disposal+safety',
-  metal: 'https://www.youtube.com/results?search_query=metal+can+reuse+tutorial',
-  residual:
-    'https://www.youtube.com/results?search_query=how+to+reduce+residual+waste',
-  textile:
-    'https://www.youtube.com/results?search_query=clothes+donation+and+upcycling+tutorial',
-  fabric:
-    'https://www.youtube.com/results?search_query=upcycle+old+clothes+tutorial',
-  shoes:
-    'https://www.youtube.com/results?search_query=upcycle+old+shoes+tutorial',
-}
-
 export const DISPOSAL_LOCATIONS = [
   {
     id: 1,

@@ -1,9 +1,6 @@
-import { useState } from 'react'
 import {
-  CATEGORY_LIST,
   WASTE_CATEGORIES,
   DISPOSAL_STEPS,
-  TUTORIAL_LINKS,
 } from '../../data/wasteData'
 import { normalizeCategory } from '../../services/sortifyApi'
 
@@ -67,9 +64,8 @@ function DisposalSteps({
   detectedItem,
   resultRecommendation,
   wasteInfo = {},
-  categoryOptions = [],
 }) {
-  const [selected, setSelected] = useState(detectedCategory)
+  const selected = detectedCategory
 
   const selectedRecommendation =
     resultRecommendation &&
@@ -81,17 +77,6 @@ function DisposalSteps({
     ...wasteInfo[selected],
     color: WASTE_CATEGORIES[selected]?.color || WASTE_CATEGORIES.residual.color,
   }
-  const categories =
-    categoryOptions.length > 0
-      ? categoryOptions.map((option) => ({
-          ...option,
-          ...wasteInfo[option.id],
-          color:
-            WASTE_CATEGORIES[option.id]?.color ||
-            option.color ||
-            WASTE_CATEGORIES.residual.color,
-        }))
-      : CATEGORY_LIST
   const steps =
     selectedRecommendation?.disposal_instructions ||
     wasteInfo[selected]?.steps ||
@@ -106,17 +91,7 @@ function DisposalSteps({
       ? recommendationTutorials
       : wasteInfo[selected]?.tutorials || []
   )
-  const tutorialItems =
-    backendTutorials.length > 0
-      ? backendTutorials
-      : [
-          {
-            id: 'fallback-tutorial',
-            type: 'article',
-            url: wasteInfo[selected]?.tutorialUrl || TUTORIAL_LINKS[selected],
-            label: `Tutorial for ${category.label}`,
-          },
-        ].filter((item) => item.url)
+  const tutorialItems = backendTutorials
   const videoTutorials = tutorialItems.filter((item) => item.type === 'video')
   const articleTutorials = tutorialItems.filter((item) => item.type === 'article')
   const tutorialSubject =
@@ -132,28 +107,15 @@ function DisposalSteps({
       </div>
 
       <div className="pills-row">
-        {categories.map((cat) => {
-          const active = cat.id === selected
-
-          return (
-            <button
-              key={cat.id}
-              type="button"
-              className={`pill ${active ? 'pill--active' : ''}`}
-              style={active ? { background: cat.color, color: '#fff' } : {}}
-              onClick={() => setSelected(cat.id)}
-            >
-              {cat.label}
-            </button>
-          )
-        })}
+        <span
+          className="pill pill--active"
+          style={{ background: category.color, color: '#fff' }}
+        >
+          {category.label}
+        </span>
       </div>
 
       <div className="steps-header">
-        <span className="category-tag" style={{ background: category.color }}>
-          {category.label}
-        </span>
-
         <span className="steps-count">{steps.length} steps</span>
       </div>
 
@@ -174,43 +136,59 @@ function DisposalSteps({
 
       {(videoTutorials.length > 0 || articleTutorials.length > 0) && (
         <div className="tutorial-section">
-          <div className="tutorial-section-head">
-            <span>Watch creative reuse tutorials for {tutorialSubject}</span>
-          </div>
-
           {videoTutorials.length > 0 && (
-            <div className="tutorial-video-grid">
-              {videoTutorials.map((tutorial, index) => (
-                <article className="tutorial-video-item" key={tutorial.id}>
-                  <iframe
-                    src={tutorial.url}
-                    title={`${tutorial.label} ${index + 1}`}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                  />
-                  <div className="tutorial-video-copy">
-                    <strong>{tutorial.label}</strong>
-                    {tutorial.description && <p>{tutorial.description}</p>}
-                  </div>
-                </article>
-              ))}
-            </div>
+            <>
+              <div className="tutorial-section-head">
+                <span>Watch creative reuse tutorials for {tutorialSubject}</span>
+              </div>
+
+              <div className="tutorial-video-grid">
+                {videoTutorials.map((tutorial, index) => (
+                  <article className="tutorial-video-item" key={tutorial.id}>
+                    <iframe
+                      src={tutorial.url}
+                      title={`${tutorial.label} ${index + 1}`}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    />
+                    <div className="tutorial-video-copy">
+                      <strong>{tutorial.label}</strong>
+                      {tutorial.description && <p>{tutorial.description}</p>}
+                      <a
+                        href={tutorial.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="tutorial-link"
+                      >
+                        Open video
+                      </a>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </>
           )}
 
           {articleTutorials.length > 0 && (
-            <div className="tutorial-article-row">
-              {articleTutorials.map((tutorial) => (
-                <a
-                  href={tutorial.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="tutorial-link"
-                  key={tutorial.id}
-                >
-                  Read article: {tutorial.label}
-                </a>
-              ))}
-            </div>
+            <>
+              <div className="tutorial-section-head">
+                <span>Read disposal articles for {tutorialSubject}</span>
+              </div>
+
+              <div className="tutorial-article-row">
+                {articleTutorials.map((tutorial) => (
+                  <a
+                    href={tutorial.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="tutorial-link"
+                    key={tutorial.id}
+                  >
+                    Read article: {tutorial.label}
+                  </a>
+                ))}
+              </div>
+            </>
           )}
         </div>
       )}
