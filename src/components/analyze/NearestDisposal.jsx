@@ -3,6 +3,7 @@ import { fetchLocations, fetchNearestLocations } from '../../services/sortifyApi
 
 const NEAREST_GROUPS = [
   { id: 'bank_sampah', label: 'Bank Sampah' },
+  { id: 'tpa', label: 'TPA' },
   { id: 'tps', label: 'TPS' },
   { id: 'tpst', label: 'TPST' },
 ]
@@ -161,8 +162,8 @@ function NearestDisposal() {
           <p className="nearest-panel-kicker">Your location</p>
           <h3>Find the 3 nearest disposal places by type</h3>
           <p>
-            Use your browser location to show the closest Bank Sampah, TPS, and
-            TPST.
+            Use your browser location to show the closest Bank Sampah, TPA,
+            TPS, and TPST.
           </p>
         </div>
 
