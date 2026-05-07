@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import newCamIcon from '../../assets/new-cam.png'
 
 /**
  * Step 1 – Upload: drag-and-drop area + file input + preview + analyze CTA.
@@ -59,7 +60,7 @@ function UploadStep({
           }}
         >
           <div className="upload-icon" aria-hidden="true">
-            📷
+            <img src={newCamIcon} alt="" />
           </div>
 
           <p className="upload-primary">

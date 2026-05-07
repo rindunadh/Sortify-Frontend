@@ -165,8 +165,14 @@
   transform: translateY(-2px);
 }
 .upload-icon {
-  font-size: 52px;
-  margin-bottom: 14px;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+.upload-icon img {
+  width: min(200px, 100vw);
+  height: auto;
+  display: block;
 }
 .upload-primary {
   font-size: 17px;

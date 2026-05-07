@@ -162,7 +162,7 @@ function NearestDisposal() {
           <h3>Find the 3 nearest disposal places by type</h3>
           <p>
             Use your browser location to show the closest Bank Sampah, TPS, and
-            TPST returned by the backend.
+            TPST.
           </p>
         </div>
 
