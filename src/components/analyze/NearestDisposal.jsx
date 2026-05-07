@@ -1,5 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
-import { fetchLocations } from '../../services/sortifyApi'
+import { fetchLocations, fetchNearestLocations } from '../../services/sortifyApi'
+
+const NEAREST_GROUPS = [
+  { id: 'bank_sampah', label: 'Bank Sampah' },
+  { id: 'tps', label: 'TPS' },
+  { id: 'tpst', label: 'TPST' },
+]
 
 /**
  * Step 4 - Nearest disposal: filters nearby facilities by city/search.
@@ -11,6 +17,10 @@ function NearestDisposal() {
   const [locations, setLocations] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState('')
+  const [nearestLocations, setNearestLocations] = useState({})
+  const [userLocation, setUserLocation] = useState(null)
+  const [isLocating, setIsLocating] = useState(false)
+  const [locationMessage, setLocationMessage] = useState('')
 
   useEffect(() => {
     let isMounted = true
@@ -38,6 +48,52 @@ function NearestDisposal() {
       isMounted = false
     }
   }, [])
+
+  const handleUseCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationMessage('Your browser does not support location access.')
+      return
+    }
+
+    setIsLocating(true)
+    setLocationMessage('Chrome will ask permission to use your location.')
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const coords = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        }
+
+        try {
+          const nearest = await fetchNearestLocations(coords)
+          setUserLocation(coords)
+          setNearestLocations(nearest)
+          setLocationMessage('')
+        } catch {
+          setNearestLocations({})
+          setLocationMessage('Could not load nearest disposal data from the backend.')
+        } finally {
+          setIsLocating(false)
+        }
+      },
+      (error) => {
+        const denied = error.code === error.PERMISSION_DENIED
+        setNearestLocations({})
+        setLocationMessage(
+          denied
+            ? 'Location permission was denied. You can still browse by city below.'
+            : 'Could not detect your location. You can still browse by city below.'
+        )
+        setIsLocating(false)
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 60000,
+      }
+    )
+  }
 
   const cityOptions = useMemo(
     () => [
@@ -79,6 +135,9 @@ function NearestDisposal() {
 
     return cityMatches && typeMatches && searchMatches
   })
+  const hasNearestResults = NEAREST_GROUPS.some(
+    (group) => nearestLocations[group.id]?.length > 0
+  )
 
   return (
     <section className="analyze-card fade-in is-visible">
@@ -96,6 +155,87 @@ function NearestDisposal() {
           onChange={(event) => setSearchTerm(event.target.value)}
         />
       </div>
+
+      <div className="nearest-location-panel">
+        <div>
+          <p className="nearest-panel-kicker">Your location</p>
+          <h3>Find the 3 nearest disposal places by type</h3>
+          <p>
+            Use your browser location to show the closest Bank Sampah, TPS, and
+            TPST returned by the backend.
+          </p>
+        </div>
+
+        <button
+          className="btn-primary nearest-location-button"
+          type="button"
+          onClick={handleUseCurrentLocation}
+          disabled={isLocating}
+        >
+          {isLocating ? 'Detecting...' : 'Use my location'}
+        </button>
+      </div>
+
+      {locationMessage && (
+        <p className="api-status api-status--warning" role="status">
+          {locationMessage}
+        </p>
+      )}
+
+      {userLocation && (
+        <p className="nearest-user-location">
+          Location detected: {userLocation.lat.toFixed(5)}, {userLocation.lng.toFixed(5)}
+        </p>
+      )}
+
+      {hasNearestResults && (
+        <div className="nearest-results">
+          {NEAREST_GROUPS.map((group) => {
+            const groupLocations = nearestLocations[group.id] || []
+
+            return (
+              <div className="nearest-group" key={group.id}>
+                <div className="nearest-group-head">
+                  <h3>{group.label}</h3>
+                  <span>{groupLocations.length} nearest</span>
+                </div>
+
+                {groupLocations.length > 0 ? (
+                  <div className="nearest-mini-list">
+                    {groupLocations.map((location) => (
+                      <article className="nearest-mini-card" key={location.id}>
+                        <div>
+                          <h4>{location.name}</h4>
+                          <p>{location.address}</p>
+                          {location.distanceKm > 0 && (
+                            <span>{location.distanceKm.toFixed(2)} km away</span>
+                          )}
+                        </div>
+
+                        <a
+                          className="nearest-mini-link"
+                          href={
+                            location.mapsUrl ||
+                            `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                              location.address
+                            )}`
+                          }
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          Maps
+                        </a>
+                      </article>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="nearest-empty">No nearby {group.label} returned yet.</p>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      )}
 
       <div className="filter-group">
         <span className="filter-label">City</span>

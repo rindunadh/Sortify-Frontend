@@ -163,20 +163,42 @@ export async function fetchLocations() {
 
   if (!Array.isArray(locations)) return []
 
-  return locations.map((location) => ({
+  return locations.map(normalizeLocation)
+}
+
+function normalizeLocation(location) {
+  const address = [location.address, location.city, location.province]
+    .filter(Boolean)
+    .join(', ')
+
+  return {
     id: location.id,
     name: location.name,
     city: location.city,
     typeId: location.facility_type,
     type: location.facility_type_display || location.facility_type || 'TPS',
-    address: [location.address, location.city, location.province]
-      .filter(Boolean)
-      .join(', '),
+    address,
     distanceKm: Number(location.distanceKm ?? location.distance_km ?? 0),
     mapsUrl:
       location.maps_url ||
       `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
         location.address || location.name
       )}`,
-  }))
+  }
+}
+
+export async function fetchNearestLocations({ lat, lng }) {
+  const params = new URLSearchParams({
+    lat: String(lat),
+    lng: String(lng),
+  })
+  const payload = await apiFetch(`/api/locations/nearest/?${params}`)
+  const nearest = payload.nearest || {}
+
+  return Object.entries(nearest).reduce((acc, [typeKey, typeLocations]) => {
+    acc[typeKey] = Array.isArray(typeLocations)
+      ? typeLocations.map(normalizeLocation)
+      : []
+    return acc
+  }, {})
 }
